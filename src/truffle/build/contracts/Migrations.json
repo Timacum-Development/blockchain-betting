@@ -1381,12 +1381,12 @@
     "300": {
       "events": {},
       "links": {},
-      "address": "0xE7b3Ccd8880AD4F19EE79cA2A85822288a49Be78",
-      "transactionHash": "0x4e3a2f20399cf572a433dcd2c177ba345ae4368cbe7291cfeb3c1d4a5b293f8f"
+      "address": "0xa1e71947FB6225fC5D00B0D3Cc01Ef7EE571883c",
+      "transactionHash": "0xd2e3ac442f9fd8cf127f3f4d4035426fe5adcb043da1daadd6baecf4e7938274"
     }
   },
   "schemaVersion": "3.0.1",
-  "updatedAt": "2019-01-24T22:58:32.016Z",
+  "updatedAt": "2019-01-26T12:59:50.255Z",
   "devdoc": {
     "methods": {}
   },

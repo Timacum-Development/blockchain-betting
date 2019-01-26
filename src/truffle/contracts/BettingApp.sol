@@ -1,94 +1,78 @@
-pragma solidity >= 0.4.22 < 0.6.0;
+pragma solidity >= 0.5.0 < 0.6.0;
 
 contract BettingApp {
-    
-    address payable _houseAddress;
-    uint256 public _totalBetAmount;
-    uint256 public _totalBull;
-    uint256 public _totalBear;
-    uint256 public _amountBull;
-    uint256 public _amountBear;
-    
-    address payable[] public _betsArray;
+    address payable public contractOwner;
+    uint public totalBetAmount;
+    uint public totalBetUpAmount;
+    uint public totalBetDownAmount;
     
     struct Player {
-        string _username;
-        string _password;
+        string username;
+        string password;
     }
     
     struct Bet {
-        address payable _address;
-        uint8 _betType;
-        uint256 _amount;
+        address payable playerAddress;
+        uint8 betType;
+        uint amount;
     }
     
-    mapping (address => Bet) public _betInfo;
+    Bet[] public Bets;
     
     constructor() public {
-        _houseAddress = msg.sender; 
-        _totalBetAmount = 0;
-        _totalBear = 0;
-        _totalBull = 0;
-        _amountBear = 0;
-        _amountBull = 0;
+        contractOwner = msg.sender;
+        totalBetAmount = 0;
+        totalBetUpAmount = 0;
+        totalBetDownAmount = 0;
     }
     
-    
-    function purchaseBet(uint8 _type, uint256 _betAmount) public payable {
-        require(msg.sender != _houseAddress);
-        require(_type==1 || _type==2);
+    function purchaseBet(uint8 _type) public payable {
+        require(msg.sender != contractOwner);
+        require(_type == 1 || _type == 2);
         
-        _betInfo[msg.sender]._betType = _type;
-        _betInfo[msg.sender]._amount = _betAmount;
+        Bet memory newBet;
+        newBet.playerAddress = msg.sender;
+        newBet.betType = _type;
+        newBet.amount = msg.value;
         
-        _totalBetAmount += _betAmount;
+        totalBetAmount += msg.value;
         
-        if(_type == 1) {
-            _totalBear++;
-            _amountBear += _betAmount;
-        }
-        else {
-            _totalBull++; 
-            _amountBull += _betAmount;
-        }
+        if (_type == 1)
+            totalBetDownAmount += msg.value;
+        else
+            totalBetUpAmount += msg.value;
 
-        
-        _betsArray.push(msg.sender);
+        Bets.push(newBet);
     }
     
-    function payWinnigBets(uint8 _winningType) public payable {
-         require(_winningType==1 || _winningType==2);
-         address payable _tempAddress;
-         uint256 _ethForWinners;
-         uint256 _ethCoefficient;
+    function payWinnigBets(uint8 _winningType) public {
+        require(_winningType == 1 || _winningType == 2);
+        uint reward;
+        uint rewardCoefficient;
+        uint ethForHouse;
         
-        //10% for the house
-        if(_winningType == 1) {
-            uint256 _ethForHouse;
-            _ethForHouse += (_amountBull * 10) / 100;
-            address(_houseAddress).transfer(_ethForHouse);
-            _totalBetAmount -= _ethForHouse;
-            _ethCoefficient = _totalBetAmount / _totalBear;
-        } 
-        else {
-            uint256 _ethForHouse;
-            _ethForHouse += (_amountBear * 10) / 100;
-            address(_houseAddress).transfer(_ethForHouse);
-            _totalBetAmount -= _ethForHouse;
-             _ethCoefficient = _totalBetAmount / _totalBull;
+        if (_winningType == 1) {
+            ethForHouse = totalBetUpAmount * 10 / 100;
+            contractOwner.transfer(ethForHouse);
+            totalBetAmount -= ethForHouse;
+            rewardCoefficient = totalBetAmount * 10000 / totalBetDownAmount;
+        } else {
+            ethForHouse = totalBetDownAmount * 10 / 100;
+            contractOwner.transfer(ethForHouse);
+            totalBetAmount -= ethForHouse;
+            rewardCoefficient = totalBetAmount * 10000 / totalBetUpAmount;
         }
   
-        
-        for(uint256 i=0; i<_betsArray.length; i++) {
-            _tempAddress = _betsArray[i];
-            if(_betInfo[_tempAddress]._betType == _winningType) {
-                _ethForWinners = _betInfo[_tempAddress]._amount * _ethCoefficient;
-                _betsArray[i].transfer(_ethForWinners);
+        for (uint i = 0; i < Bets.length; i++) {
+            if(Bets[i].betType == _winningType) {
+                reward = Bets[i].amount * rewardCoefficient / 10000;
+                Bets[i].playerAddress.transfer(reward);
             }
         }
         
-        _betsArray.length = 0;
-        _totalBetAmount = 0;
-        
+        Bets.length = 0;
+        totalBetAmount = 0;
+        totalBetUpAmount = 0;
+        totalBetDownAmount = 0;
     }
 }

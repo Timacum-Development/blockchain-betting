@@ -9,6 +9,14 @@ import compiledContract from './truffle/build/contracts/BettingApp.json';
 const web3 = new Web3(Web3.givenProvider || "http://37.220.78.36:8546");
 
 /**
+ * Unlock coinbase address
+ */
+web3.eth.getCoinbase().then(result => {
+  const coinbaseAddress = result;
+  web3.eth.personal.unlockAccount(coinbaseAddress, 'koliko', 0).then(console.log('Coinbase address unlocked'));
+});
+
+/**
  * Get address from compiled contract
  */
 const contractAddress = compiledContract.networks['300'].address;
