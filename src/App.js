@@ -2,11 +2,12 @@ import React, { Component } from 'react';
 import './App.css';
 import Web3 from 'web3';
 import compiledContract from './truffle/build/contracts/BettingApp.json';
+import Signup from './components/signup/Signup';
 
 /**
  * Create web3 instance
  */
-const web3 = new Web3(Web3.givenProvider || "http://37.220.78.36:8546");
+const web3 = new Web3(Web3.givenProvider || "http://localhost:8545");
 
 /**
  * Unlock coinbase address
@@ -51,10 +52,19 @@ web3.eth.getAccounts().then(result => {
 });
 
 class App extends Component {
+  state = {
+    showSignup: true
+  }
+
   render() {
+    let signup = null;
+    if (this.state.showSignup) {
+      signup = (<Signup />);
+    }
+
     return (
       <div className="App">
-        
+        {signup}
       </div>
     );
   }
