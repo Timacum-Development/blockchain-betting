@@ -63,10 +63,6 @@ contract BettingApp {
         return "New address created successfuly";
     }
 
-    function didaKralj() public pure returns (string memory){
-        return "Stvarno kralj";
-    }
-
     function getAvailableAddresses() public view returns (uint number) {
         return availableAddresses;
     }
