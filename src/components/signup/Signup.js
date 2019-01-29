@@ -20,13 +20,11 @@ const contractInstance = new web3.eth.Contract(compiledContract.abi, contractAdd
 web3.eth.getCoinbase().then(result => {
     const coinbaseAddress = result;
     contractInstance.methods.registerUser("velja", "koliko").send({ from: coinbaseAddress }).then((response) => {
-        web3.eth.getGasPrice().then(console.log);
         console.log(response);
-        //contractInstance.methods.createNewAddress("0xa7b59Cdbc3ff3a0B74a6417AC89E64EC22CcC73a", "koliko").send({ from: coinbaseAddress }).then(console.log);
-        contractInstance.methods.didaKralj().then(console.log);
-        //contractInstance.methods.getAvailableAddresses().call().then((response) => {
-        //    console.log(response);
-        //});
+        contractInstance.methods.createNewAddress("0xa7b59Cdbc3ff3a0B74a6417AC89E64EC22CcC73a", "koliko").send({ from: coinbaseAddress }).then(console.log);
+        contractInstance.methods.getAvailableAddresses().call().then((response) => {
+           console.log(response);
+        });
     });
 });
 
