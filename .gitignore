@@ -10,7 +10,6 @@
 
 # production
 /build
-src/truffle/build
 
 # misc
 .DS_Store
