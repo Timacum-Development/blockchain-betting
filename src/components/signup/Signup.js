@@ -5,7 +5,7 @@ import compiledContract from '../../truffle/build/contracts/BettingApp.json';
 /**
  * Create web3 instance
  */
-const web3 = new Web3("http://localhost:8545");
+const web3 = new Web3("http://192.168.11.11:8546");
 
 /**
  * Get address from compiled contract
@@ -77,7 +77,7 @@ class Signup extends Component {
                     if (receipt > 0) {
                         console.log('There is available address for new accounts, number of available addresses is: ' + receipt);
                         // register user
-                        contractInstance.methods.registerUser(this.state.inputUsername, "koliko").send({ from: coinbaseAddress, gas: 200000 }).then((receipt) => {
+                        contractInstance.methods.registerUser(this.state.inputUsername, this.state.inputPassword).send({ from: coinbaseAddress, gas: 200000 }).then((receipt) => {
                             console.log('User successfully registred, gas spent: ' + receipt.gasUsed);
                             // create new account that will be available for new users
                             this.createNewAccount();
