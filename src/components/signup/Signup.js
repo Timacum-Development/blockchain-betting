@@ -63,7 +63,7 @@ class Signup extends Component {
         });
     }
 
-    signUp = (event) => {
+    signUp = () => {
         // check if there is empty field
         if (this.state.inputUsername === '' || this.state.inputPassword === '') {
             alert('Username or password field is empty');

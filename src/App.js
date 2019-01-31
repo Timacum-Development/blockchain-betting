@@ -3,6 +3,7 @@ import './App.css';
 import Web3 from 'web3';
 import compiledContract from './truffle/build/contracts/BettingApp.json';
 import Signup from './components/signup/Signup';
+import Signin from './components/signin/Signin';
 
 /**
  * Create web3 instance
@@ -53,7 +54,8 @@ console.log(contractInstance);
 
 class App extends Component {
   state = {
-    showSignup: true
+    showSignup: true,
+    showSignin: true
   }
 
   render() {
@@ -62,9 +64,15 @@ class App extends Component {
       signup = (<Signup />);
     }
 
+    let signin = null;
+    if (this.state.showSignin) {
+      signin = (<Signin />);
+    }
+
     return (
       <div className="App">
         {signup}
+        {signin}
       </div>
     );
   }

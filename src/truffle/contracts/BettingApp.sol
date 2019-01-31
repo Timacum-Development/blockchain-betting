@@ -47,6 +47,16 @@ contract BettingApp {
     function checkIfUserExist(string memory _username) public view returns (bool) {
         return users[_username].exist;
     }
+
+    function logIn(string memory _username, string memory _password) public view returns (bool) {
+        bytes memory tempPass = abi.encode(users[_username].password);
+        bytes memory _tempPass = abi.encode(_password);
+        if (users[_username].exist && keccak256(tempPass) == keccak256(_tempPass)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
     
     function createNewAddress(address _addressToAsign, string memory _password) public returns (bool){
         if (msg.sender != contractOwner) return false;
