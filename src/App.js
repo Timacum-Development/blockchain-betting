@@ -7,7 +7,7 @@ import Signup from './components/signup/Signup';
 /**
  * Create web3 instance
  */
-const web3 = new Web3(Web3.givenProvider || "http://localhost:8545");
+const web3 = new Web3("http://localhost:8545");
 
 /**
  * Unlock coinbase address
@@ -43,13 +43,13 @@ console.log(contractInstance);
 /**
  * List all accounts with their balance
  */
-web3.eth.getAccounts().then(result => {
-  result.forEach(address => {
-    web3.eth.getBalance(address).then(balance => {
-      console.log('Address: ' + address + ', balance: ' + web3.utils.fromWei(balance, 'ether') + ' ether');
-    });
-  });
-});
+// web3.eth.getAccounts().then(result => {
+//   result.forEach(address => {
+//     web3.eth.getBalance(address).then(balance => {
+//       console.log('Address: ' + address + ', balance: ' + web3.utils.fromWei(balance, 'ether') + ' ether');
+//     });
+//   });
+// });
 
 class App extends Component {
   state = {

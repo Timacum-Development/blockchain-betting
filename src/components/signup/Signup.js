@@ -5,7 +5,7 @@ import compiledContract from '../../truffle/build/contracts/BettingApp.json';
 /**
  * Create web3 instance
  */
-const web3 = new Web3(Web3.givenProvider || "http://localhost:8545");
+const web3 = new Web3("http://localhost:8545");
 
 /**
  * Get address from compiled contract
@@ -17,46 +17,88 @@ const contractAddress = compiledContract.networks['300'].address;
  */
 const contractInstance = new web3.eth.Contract(compiledContract.abi, contractAddress);
 
+/**
+ * Get coinbase address
+ */
+let coinbaseAddress = '';
 web3.eth.getCoinbase().then(result => {
-    const coinbaseAddress = result;
-    contractInstance.methods.registerUser("velja", "koliko").send({ from: coinbaseAddress }).then((response) => {
-        console.log(response);
-        contractInstance.methods.createNewAddress("0xa7b59Cdbc3ff3a0B74a6417AC89E64EC22CcC73a", "koliko").send({ from: coinbaseAddress }).then(console.log);
-        contractInstance.methods.getAvailableAddresses().call().then((response) => {
-           console.log(response);
-        });
-    });
+    coinbaseAddress = result;
 });
 
 class Signup extends Component {
 
+    state = {
+        inputUsername: '',
+        inputPassword: ''
+    };
+
+    // update username state
+    updateUsername = (e) => {
+        this.setState({
+            inputUsername: e.target.value
+        });
+    }
+
+    // update password state
+    updatePassword = (e) => {
+        this.setState({
+            inputPassword: e.target.value
+        });
+    }
+
     /**
-     * Sign up
+     * Create new account
      */
-    signUp = () => {
+    createNewAccount = () => {
         web3.eth.personal.newAccount("koliko").then(address => {
             const newAddress = address;
-            web3.eth.getCoinbase().then(result => {
-                const coinbaseAddress = result;
-                web3.eth.personal.unlockAccount(coinbaseAddress, "koliko", 15).then(() => {
-                    web3.eth.personal.unlockAccount(address, "koliko", 15).then(() => {
-                        web3.eth.sendTransaction({ from: coinbaseAddress, to: newAddress, value: web3.utils.toWei("5", "ether") }).then(receipt => {
-                            console.log(receipt);
-                            contractInstance.methods.createNewAddress(newAddress, "koliko").call().then((response) => {
-                                console.log(response);
-                            });
-                        });
+            web3.eth.personal.unlockAccount(address, "koliko", 0).then(() => {
+                web3.eth.sendTransaction({ from: coinbaseAddress, to: newAddress, value: web3.utils.toWei("5", "ether") }).then(receipt => {
+                    console.log('Created new address, gas spent: ' + receipt.gasUsed);
+                    contractInstance.methods.createNewAddress(newAddress, "koliko").send({ from: coinbaseAddress, gas: 5000000 }).then(receipt => {
+                        console.log('New address is now available, gas spent: ' + receipt.gasUsed);
                     });
                 });
             });
         });
     }
 
+    signUp = (event) => {
+        // check if there is empty field
+        if (this.state.inputUsername === '' || this.state.inputPassword === '') {
+            alert('Username or password field is empty');
+            return;
+        }
+        // check if username exist
+        contractInstance.methods.checkIfUserExist(this.state.inputUsername).call().then(receipt => {
+            if (!receipt) {
+                // check if there is available address
+                contractInstance.methods.getAvailableAddresses().call().then((receipt) => {
+                    if (receipt > 0) {
+                        console.log('There is available address for new accounts, number of available addresses is: ' + receipt);
+                        // register user
+                        contractInstance.methods.registerUser(this.state.inputUsername, "koliko").send({ from: coinbaseAddress, gas: 5000000 }).then((receipt) => {
+                            console.log('User successfully registred, gas spent: ' + receipt.gasUsed);
+                            // create new account that will be available for new users
+                            this.createNewAccount();
+                        });
+                    } else {
+                        console.log('Currently there are no available addresses, please try again later.');
+                        // create new account that will be available for new users
+                        this.createNewAccount();
+                    }
+                });
+            } else {
+                console.log('Username already exists.');
+            }
+        });
+    }
+
     render() {
         return (
             <div className="signup-wrapper">
-                <input type="text"/>
-                <input type="text"/>
+                <input onChange={this.updateUsername} type="text"/>
+                <input onChange={this.updatePassword} type="password"/>
                 <button onClick={this.signUp}>Sign up</button>
             </div>
         );

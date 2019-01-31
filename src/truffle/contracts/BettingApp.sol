@@ -33,34 +33,28 @@ contract BettingApp {
     }
     mapping (uint => AddressesPool) addresses;
     
-    function registerUser(string memory _username, string memory _password) public returns (string memory) {
-        if (!users[_username].exist) {
-            if (availableAddresses > 0) {
-                users[_username].password = _password;
-                users[_username].assignedAddress = addresses[unusedAddressId].addressToAsign;
-                users[_username].addressPassword = addresses[unusedAddressId].password;
-                users[_username].exist = true;
-                unusedAddressId++;
-                availableAddresses--;
-                return "You have been successfully registered";
-            } else {
-                return "There are no available addresses, please try again later.";
-            }
-        } else {
-            return "Username already exist";
-        }
+    function registerUser(string memory _username, string memory _password) public returns (bool) {
+        if (msg.sender != contractOwner) return false;
+        users[_username].password = _password;
+        users[_username].assignedAddress = addresses[unusedAddressId].addressToAsign;
+        users[_username].addressPassword = addresses[unusedAddressId].password;
+        users[_username].exist = true;
+        unusedAddressId++;
+        availableAddresses--;
+        return true;
     }
 
     function checkIfUserExist(string memory _username) public view returns (bool) {
         return users[_username].exist;
     }
     
-    function createNewAddress(address _addressToAsign, string memory _password) public returns (string memory){
+    function createNewAddress(address _addressToAsign, string memory _password) public returns (bool){
+        if (msg.sender != contractOwner) return false;
         addresses[newAddressId].addressToAsign = _addressToAsign;
         addresses[newAddressId].password = _password;
-        newAddressId = newAddressId + 1;
-        availableAddresses = availableAddresses + 1;
-        return "New address created successfuly";
+        newAddressId++;
+        availableAddresses++;
+        return true;
     }
 
     function getAvailableAddresses() public view returns (uint number) {
