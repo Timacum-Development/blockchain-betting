@@ -9,7 +9,7 @@ import Dashboard from './components/dashboard/Dashboard';
 /**
  * Create web3 instance
  */
-const web3 = new Web3("http://192.168.11.11:8546");
+const web3 = new Web3("http://37.220.78.36:8546");
 
 /**
  * Unlock coinbase address
