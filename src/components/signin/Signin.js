@@ -47,8 +47,12 @@ class Signin extends Component {
         // log in user 
         contractInstance.methods.logIn(this.state.inputUsername, this.state.inputPassword).call().then(receipt => {
             if (receipt) {
-                alert('Logged in')
+                sessionStorage.setItem('username', this.state.inputUsername);
+                sessionStorage.setItem('password', this.state.inputPassword);
+                alert('Successfully logged in');
             } else {
+                sessionStorage.setItem('username', '');
+                sessionStorage.setItem('password', '');
                 alert('Wrong username or password');
             }
         });
@@ -57,8 +61,8 @@ class Signin extends Component {
     render() {
         return (
             <div className="signin-wrapper">
-                <input onChange={this.updateUsername} type="text" />
-                <input onChange={this.updatePassword} type="password" />
+                <input onChange={this.updateUsername} type="text" placeholder="Username"/>
+                <input onChange={this.updatePassword} type="password" placeholder="Password"/>
                 <button onClick={this.signIn}>Sign in</button>
             </div>
         );

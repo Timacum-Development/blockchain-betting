@@ -55,7 +55,7 @@ class Signup extends Component {
             web3.eth.personal.unlockAccount(address, "koliko", 0).then(() => {
                 web3.eth.sendTransaction({ from: coinbaseAddress, to: newAddress, value: web3.utils.toWei("5", "ether") }).then(receipt => {
                     console.log('Created new address, gas spent: ' + receipt.gasUsed);
-                    contractInstance.methods.createNewAddress(newAddress, "koliko").send({ from: coinbaseAddress, gas: 5000000 }).then(receipt => {
+                    contractInstance.methods.createNewAddress(newAddress, "koliko").send({ from: coinbaseAddress, gas: 200000 }).then(receipt => {
                         console.log('New address is now available, gas spent: ' + receipt.gasUsed);
                     });
                 });
@@ -77,7 +77,7 @@ class Signup extends Component {
                     if (receipt > 0) {
                         console.log('There is available address for new accounts, number of available addresses is: ' + receipt);
                         // register user
-                        contractInstance.methods.registerUser(this.state.inputUsername, "koliko").send({ from: coinbaseAddress, gas: 5000000 }).then((receipt) => {
+                        contractInstance.methods.registerUser(this.state.inputUsername, "koliko").send({ from: coinbaseAddress, gas: 200000 }).then((receipt) => {
                             console.log('User successfully registred, gas spent: ' + receipt.gasUsed);
                             // create new account that will be available for new users
                             this.createNewAccount();
@@ -97,8 +97,8 @@ class Signup extends Component {
     render() {
         return (
             <div className="signup-wrapper">
-                <input onChange={this.updateUsername} type="text"/>
-                <input onChange={this.updatePassword} type="password"/>
+                <input onChange={this.updateUsername} type="text" placeholder="Username"/>
+                <input onChange={this.updatePassword} type="password" placeholder="Password"/>
                 <button onClick={this.signUp}>Sign up</button>
             </div>
         );
