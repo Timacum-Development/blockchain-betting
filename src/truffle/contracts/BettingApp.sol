@@ -57,6 +57,14 @@ contract BettingApp {
             return false;
         }
     }
+
+    function getUserLoggedInAddress(string memory _username, string memory _password) public view returns(address) {
+        bytes memory tempPass = abi.encode(users[_username].password);
+        bytes memory _tempPass = abi.encode(_password);
+        if (users[_username].exist && keccak256(tempPass) == keccak256(_tempPass)) {
+            return users[_username].assignedAddress;
+        }
+    }
     
     function createNewAddress(address _addressToAsign, string memory _password) public returns (bool){
         if (msg.sender != contractOwner) return false;
@@ -82,6 +90,7 @@ contract BettingApp {
     function purchaseBet(uint8 _type) public payable {
         require(msg.sender != contractOwner);
         require(_type == 1 || _type == 2);
+        require(msg.value <= msg.sender.balance);
         
         Bet memory newBet;
         newBet.playerAddress = msg.sender;

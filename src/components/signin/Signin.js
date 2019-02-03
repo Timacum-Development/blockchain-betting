@@ -16,6 +16,7 @@ const contractAddress = compiledContract.networks['300'].address;
  * Create contract instance
  */
 const contractInstance = new web3.eth.Contract(compiledContract.abi, contractAddress);
+global.loggedInAddress = null;
 
 class Signin extends Component {
 
@@ -56,6 +57,14 @@ class Signin extends Component {
                 alert('Wrong username or password');
             }
         });
+        // get logged in user's address
+        contractInstance.methods.getUserLoggedInAddress(this.state.inputUsername, this.state.inputPassword).call()
+        .then(receipt => {
+            if(receipt) {
+                console.log("Ulogovan sam adresom " + receipt);
+                global.loggedInAddress = receipt;
+            }
+        })
     }
     render() {
         return (

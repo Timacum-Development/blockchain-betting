@@ -44,9 +44,15 @@ class Dashboard extends Component {
             alert('Value field is empty');
             return;
         }
+        // check if user is logged in
+        if((global.loggedInAddress === '0x0000000000000000000000000000000000000000') || (global.loggedInAddress === '') || (global.loggedInAddress === null)) {
+            alert('You are not logged in');
+            return;
+        }
         // place bet 
-        contractInstance.methods.purchaseBet(1).call().then(receipt => {
+        contractInstance.methods.purchaseBet(1).send({from: global.loggedInAddress, value: web3.utils.toWei(this.state.inputValue, "ether"), gas: 200000}).then(receipt => {
             if (receipt) {
+                console.log("Kladim se na keca sa adrese " + global.loggedInAddress);
                 sessionStorage.setItem('type', this.state.inputUsername);
                 alert('Bet accepted');
             } else {
@@ -61,9 +67,15 @@ class Dashboard extends Component {
                 alert('Value field is empty');
                 return;
             }
+            // check if user is logged in
+            if((global.loggedInAddress === '0x0000000000000000000000000000000000000000') || (global.loggedInAddress === '') || (global.loggedInAddress === null)) {
+                alert('You are not logged in');
+                return;
+            }
             // place bet TODO bad contract
-            contractInstance.methods.purchaseBet(2).call().then(receipt => {
+            contractInstance.methods.purchaseBet(2).send({from:global.loggedInAddress , value:web3.utils.toWei(this.state.inputValue, "ether"), gas: 200000}).then(receipt => {
                 if (receipt) {
+                    console.log("Kladim se na dvojku sa adrese " + global.loggedInAddress);
                     sessionStorage.setItem('type', this.state.inputUsername);
                     alert('Bet accepted');
                 } else {
