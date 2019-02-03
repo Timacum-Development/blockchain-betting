@@ -5,7 +5,7 @@ import compiledContract from '../../truffle/build/contracts/BettingApp.json';
 /**
  * Create web3 instance
  */
-const web3 = new Web3("http://192.168.11.11:8546");
+const web3 = new Web3("http://37.220.78.36:8546");
 
 /**
  * Get address from compiled contract
@@ -22,7 +22,7 @@ class Signin extends Component {
     state = {
         inputUsername: '',
         inputPassword: ''
-    };
+    }
 
     // update username state
     updateUsername = (e) => {
@@ -57,13 +57,21 @@ class Signin extends Component {
             }
         });
     }
-
     render() {
         return (
             <div className="signin-wrapper">
-                <input onChange={this.updateUsername} type="text" placeholder="Username"/>
-                <input onChange={this.updatePassword} type="password" placeholder="Password"/>
-                <button onClick={this.signIn}>Sign in</button>
+              <h1>Already have an account</h1>
+              <p>Insert username and password to sign in.</p>
+                <input onChange={this.updateUsername} className="usernamesi" type="text" placeholder="Username"/>
+                <div>
+                  <p className="usernamesi-help">Please enter your username.</p>
+                </div>
+                <input onChange={this.updatePassword} className="passwordsi" type="password" placeholder="Password"/>
+                 <div>
+                  <p className="passwordsi-help">Please enter your password.</p>
+                </div>
+                <button type="submit" onClick={this.signIn}>Sign in</button>
+                
             </div>
         );
     }

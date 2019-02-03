@@ -5,7 +5,7 @@ import compiledContract from '../../truffle/build/contracts/BettingApp.json';
 /**
  * Create web3 instance
  */
-const web3 = new Web3("http://192.168.11.11:8546");
+const web3 = new Web3("http://37.220.78.36:8546");
 
 /**
  * Get address from compiled contract
@@ -97,9 +97,17 @@ class Signup extends Component {
     render() {
         return (
             <div className="signup-wrapper">
-                <input onChange={this.updateUsername} type="text" placeholder="Username"/>
-                <input onChange={this.updatePassword} type="password" placeholder="Password"/>
-                <button onClick={this.signUp}>Sign up</button>
+                <h1>Register For An Account</h1>
+                <p>Insert username and password to register new account.</p>
+                <input  onChange={this.updateUsername} className="usernamesu" type="text" placeholder="Username"/>
+                <div>
+                  <p className="usernamesu-help">Please enter your username.</p>
+                </div>
+                <input onChange={this.updatePassword} className="passwordsu" type="password" placeholder="Password"/>
+                <div>
+                  <p className="passwordsu-help">Please enter your password.</p>
+                </div>
+                <button type="submit" onClick={this.signUp}>Sign up</button>
             </div>
         );
     }
