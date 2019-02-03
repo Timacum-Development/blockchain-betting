@@ -89,7 +89,7 @@ class Dashboard extends Component {
             <div className="dashboard-wrapper">
                 <div className="row">
                     <div className="col">
-                        <img alt="bittrex" className="bitimg" src="/img/bittrex.png"/>
+                    <canvas id="myChart" width="400" height="400"></canvas>
                     </div>
                 </div>
                 <div className="row"> </div>
