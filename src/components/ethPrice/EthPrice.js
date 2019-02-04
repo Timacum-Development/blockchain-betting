@@ -16,9 +16,7 @@ class EthPrice extends Component {
             fetch('https://apiv2.bitcoinaverage.com/indices/global/ticker/ETHUSD')  
             .then(data => data.json())
             .then(data => {
-               console.log(data); 
                this.setState({ price: data['last'], hourlyPercentChange: data['changes']['percent']['hour'] });
-               console.log("price: " + this.state.price);
             }); 
         }, 1000)
     }
