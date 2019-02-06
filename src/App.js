@@ -5,6 +5,7 @@ import Web3 from 'web3';
 import compiledContract from './truffle/build/contracts/BettingApp.json';
 import Signup from './components/signup/Signup';
 import Signin from './components/signin/Signin';
+import Signout from './components/signout/Signout';
 import Dashboard from './components/dashboard/Dashboard';
 import EthPrice from './components/ethPrice/EthPrice';
 
@@ -63,14 +64,16 @@ super(props);
       showSignup: true,
       showSignin: true,
       showDashboard: true,
-      showEthPrice: true
+      showEthPrice: true,
+      showSignout: false
     }
   }
 
 
   hideSignin() {
     this.setState({
-      showSignin: false
+      showSignin: !this.state.showSignin,
+      showSignout: !this.state.showSignout
     })
     console.log("App.js showSignin: " + this.state.showSignin);
   }
@@ -86,6 +89,11 @@ super(props);
       signin = (<Signin view={this.hideSignin.bind(this)}/>);
     }
 
+    let signout = null;
+    if (this.state.showSignout) {
+      signout = (<Signout view={this.hideSignin.bind(this)}/>);
+    }
+
     let dashboard = null;
     if (this.state.showDashboard) {
       dashboard = (<Dashboard />);
@@ -99,6 +107,9 @@ super(props);
 
     return (
       <div className="App">
+          <div className="col-sm-2">
+            {signout}
+          </div>
         <div className="row">
           <div className="col-sm-6">
             {signup}
