@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
+import nodeUrl from '../../eth-node-config.json';
 import Web3 from 'web3';
 import compiledContract from '../../truffle/build/contracts/BettingApp.json';
 
 /**
  * Create web3 instance
  */
-const web3 = new Web3("http://37.220.78.36:8546");
+const web3 = new Web3(nodeUrl.url);
 
 /**
  * Get address from compiled contract
