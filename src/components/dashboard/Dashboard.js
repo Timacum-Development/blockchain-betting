@@ -25,6 +25,7 @@ web3.eth.getCoinbase().then(result => {
     coinbaseAddress = result;
 });
 
+let arrayOfUsers = [];
 
 class Dashboard extends Component {
     
@@ -53,9 +54,10 @@ class Dashboard extends Component {
         // unlock user's address
         web3.eth.personal.unlockAccount(global.loggedInAddress, 'koliko', 0).then(console.log("Otkljucana adresa " + global.loggedInAddress + " KLADI SE!"));
         // place bet 
-        contractInstance.methods.purchaseBet(1).send({from: global.loggedInAddress, value: web3.utils.toWei(this.state.inputValue, "ether"), gas: 200000}).then(receipt => {
+        contractInstance.methods.purchaseBet(1).send({from: global.loggedInAddress, value: web3.utils.toWei(this.state.inputValue, "ether"), gas: 300000}).then(receipt => {
             if (receipt) {
                 console.log("Kladim se na keca sa adrese " + global.loggedInAddress);
+                arrayOfUsers.push(global.loggedInAddress);
                 sessionStorage.setItem('type', this.state.inputUsername);
                 alert('Bet accepted');
             } else {
@@ -78,9 +80,10 @@ class Dashboard extends Component {
             // unlock user's address
             web3.eth.personal.unlockAccount(global.loggedInAddress, 'koliko', 0).then(console.log("Otkljucana adresa " + global.loggedInAddress + " KLADI SE!"));
             // place bet 
-            contractInstance.methods.purchaseBet(2).send({from:global.loggedInAddress , value:web3.utils.toWei(this.state.inputValue, "ether"), gas: 200000}).then(receipt => {
+            contractInstance.methods.purchaseBet(2).send({from:global.loggedInAddress , value:web3.utils.toWei(this.state.inputValue, "ether"), gas: 300000}).then(receipt => {
                 if (receipt) {
                     console.log("Kladim se na dvojku sa adrese " + global.loggedInAddress);
+                    arrayOfUsers.push(global.loggedInAddress);
                     sessionStorage.setItem('type', this.state.inputUsername);
                     alert('Bet accepted');
                 } else {
@@ -88,6 +91,46 @@ class Dashboard extends Component {
                     alert('Bet rejected');
                 }
             });
+    }
+    PayUp = () => {
+        console.log("Kuca je na racunu na pocetku runde imala: ");
+        web3.eth.getBalance(coinbaseAddress).then(balance => {
+            console.log('Address: ' + coinbaseAddress + ', balance: ' + web3.utils.fromWei(balance, 'ether') + ' ether');
+        });
+        contractInstance.methods.payWinnigBets(1).call().then(receipt => {
+            if(receipt) {
+                alert('Congratulations');
+            } else {
+                alert('Error');
+            }
+        })
+    }
+    PayDown = () => {
+        console.log("Kuca je na racunu na pocetku runde imala: ");
+        web3.eth.getBalance(coinbaseAddress).then(balance => {
+            console.log('Address: ' + coinbaseAddress + ', balance: ' + web3.utils.fromWei(balance, 'ether') + ' ether');
+        });
+        contractInstance.methods.payWinnigBets(2).call().then(receipt => {
+            if(receipt) {
+                alert('Congratulations');
+            } else {
+                alert('Error');
+            }
+        })
+    }
+    PrintStats = () => {
+        alert("Statistika je u konzoli");
+        console.log("Kuca na racunu ima: ");
+        web3.eth.getBalance(coinbaseAddress).then(balance => {
+            console.log('Address: ' + coinbaseAddress + ', balance: ' + web3.utils.fromWei(balance, 'ether') + ' ether');
+        });
+        console.log("Nova stanja na racunima: ");
+        // console log all players after each bet (just for test)
+        arrayOfUsers.forEach(address => {
+            web3.eth.getBalance(address).then(balance => {
+                console.log('Address: ' + address + ', balance: ' + web3.utils.fromWei(balance, 'ether') + ' ether');
+            });
+        })
     }
     render() {
         return (
@@ -109,6 +152,20 @@ class Dashboard extends Component {
                         <button className="betdown" onClick={this.BetDown}>Bet down</button>
                     </div>
                 </div>
+
+                <div className="signin-wrapper"><h1>Test buttons za funkciju za isplatu</h1></div>
+                <div className="row">
+                    <div className="col-sm-3">
+                        <button className="betup" onClick={this.PayUp}>Pay up</button>
+                    </div>
+                    <div className="col-sm-3">
+                        <button className="betup" onClick={this.PayDown}>Pay down</button>
+                    </div>
+                    <div className="col-sm-3">
+                        <button className="betup" onClick={this.PrintStats}>Print Stats</button>
+                    </div>
+                </div>
+                
             </div>
         );
     }

@@ -63,6 +63,9 @@ class Signin extends Component {
         .then(receipt => {
             if(receipt) {
                 console.log("Ulogovan sam adresom " + receipt);
+                web3.eth.getBalance(receipt).then(balance => {
+                    console.log('Address: ' + receipt + ', balance: ' + web3.utils.fromWei(balance, 'ether') + ' ether');
+                });
                 global.loggedInAddress = receipt;
                 this.props.view()
             }
