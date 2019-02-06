@@ -5,7 +5,7 @@ import compiledContract from '../../truffle/build/contracts/BettingApp.json';
 /**
  * Create web3 instance
  */
-const web3 = new Web3("http://37.220.78.36:8546");
+const web3 = new Web3("http://192.168.11.11:8546");
 
 /**
  * Get address from compiled contract
@@ -63,6 +63,7 @@ class Signin extends Component {
             if(receipt) {
                 console.log("Ulogovan sam adresom " + receipt);
                 global.loggedInAddress = receipt;
+                this.props.view()
             }
         })
     }
