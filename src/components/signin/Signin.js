@@ -64,6 +64,7 @@ class Signin extends Component {
             if(receipt) {
                 console.log("Ulogovan sam adresom " + receipt);
                 global.loggedInAddress = receipt;
+                this.props.view()
             }
         })
     }

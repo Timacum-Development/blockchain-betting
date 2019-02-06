@@ -56,11 +56,23 @@ console.log(contractInstance);
 // });
 
 class App extends Component {
-  state = {
-    showSignup: true,
-    showSignin: true,
-    showDashboard: true,
-    showEthPrice: true
+
+  constructor(props){
+super(props);
+    this.state = {
+      showSignup: true,
+      showSignin: true,
+      showDashboard: true,
+      showEthPrice: true
+    }
+  }
+
+
+  hideSignin() {
+    this.setState({
+      showSignin: false
+    })
+    console.log("App.js showSignin: " + this.state.showSignin);
   }
 
   render() {
@@ -71,7 +83,7 @@ class App extends Component {
 
     let signin = null;
     if (this.state.showSignin) {
-      signin = (<Signin />);
+      signin = (<Signin view={this.hideSignin.bind(this)}/>);
     }
 
     let dashboard = null;
@@ -83,6 +95,7 @@ class App extends Component {
     if (this.state.showEthPrice) {
       ethPrice = (<EthPrice />);
     }
+    console.log("App.js showSignin: " + this.state.showSignin);
 
     return (
       <div className="App">
