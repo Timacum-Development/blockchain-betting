@@ -50,6 +50,8 @@ class Dashboard extends Component {
             alert('You are not logged in');
             return;
         }
+        // unlock user's address
+        web3.eth.personal.unlockAccount(global.loggedInAddress, 'koliko', 0).then(console.log("Otkljucana adresa " + global.loggedInAddress + " KLADI SE!"));
         // place bet 
         contractInstance.methods.purchaseBet(1).send({from: global.loggedInAddress, value: web3.utils.toWei(this.state.inputValue, "ether"), gas: 200000}).then(receipt => {
             if (receipt) {
@@ -73,7 +75,9 @@ class Dashboard extends Component {
                 alert('You are not logged in');
                 return;
             }
-            // place bet TODO bad contract
+            // unlock user's address
+            web3.eth.personal.unlockAccount(global.loggedInAddress, 'koliko', 0).then(console.log("Otkljucana adresa " + global.loggedInAddress + " KLADI SE!"));
+            // place bet 
             contractInstance.methods.purchaseBet(2).send({from:global.loggedInAddress , value:web3.utils.toWei(this.state.inputValue, "ether"), gas: 200000}).then(receipt => {
                 if (receipt) {
                     console.log("Kladim se na dvojku sa adrese " + global.loggedInAddress);
