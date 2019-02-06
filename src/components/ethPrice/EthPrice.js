@@ -13,10 +13,10 @@ class EthPrice extends Component {
  */
     componentDidMount(){        
         setInterval( () => {
-            fetch('https://apiv2.bitcoinaverage.com/indices/global/ticker/ETHUSD')  
+            fetch('https://cors-anywhere.herokuapp.com/' +'https://api.bittrex.com/api/v1.1/public/getticker?market=USD-ETH')  
             .then(data => data.json())
             .then(data => {
-               this.setState({ price: data['last'], hourlyPercentChange: data['changes']['percent']['hour'] });
+               this.setState({ price: data.result.Last});
             }); 
         }, 1000)
     }
