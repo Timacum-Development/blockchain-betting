@@ -25,6 +25,7 @@ web3.eth.getCoinbase().then(result => {
     coinbaseAddress = result;
 });
 
+global.arrayOfUsers = [];
 
 class Dashboard extends Component {
     
@@ -50,10 +51,13 @@ class Dashboard extends Component {
             alert('You are not logged in');
             return;
         }
+        // unlock user's address
+        web3.eth.personal.unlockAccount(global.loggedInAddress, 'koliko', 0).then(console.log("Otkljucana adresa " + global.loggedInAddress + " YOU CAN NOW BET!"));
         // place bet 
-        contractInstance.methods.purchaseBet(1).send({from: global.loggedInAddress, value: web3.utils.toWei(this.state.inputValue, "ether"), gas: 200000}).then(receipt => {
+        contractInstance.methods.purchaseBet(1).send({from: global.loggedInAddress, value: web3.utils.toWei(this.state.inputValue, "ether"), gas: 300000}).then(receipt => {
             if (receipt) {
                 console.log("Kladim se na keca sa adrese " + global.loggedInAddress);
+                global.arrayOfUsers.push(global.loggedInAddress);
                 sessionStorage.setItem('type', this.state.inputUsername);
                 alert('Bet accepted');
             } else {
@@ -73,10 +77,13 @@ class Dashboard extends Component {
                 alert('You are not logged in');
                 return;
             }
-            // place bet TODO bad contract
-            contractInstance.methods.purchaseBet(2).send({from:global.loggedInAddress , value:web3.utils.toWei(this.state.inputValue, "ether"), gas: 200000}).then(receipt => {
+            // unlock user's address
+            web3.eth.personal.unlockAccount(global.loggedInAddress, 'koliko', 0).then(console.log("Otkljucana adresa " + global.loggedInAddress + " YOU CAN NOW BET!"));
+            // place bet 
+            contractInstance.methods.purchaseBet(2).send({from:global.loggedInAddress , value:web3.utils.toWei(this.state.inputValue, "ether"), gas: 300000}).then(receipt => {
                 if (receipt) {
                     console.log("Kladim se na dvojku sa adrese " + global.loggedInAddress);
+                    global.arrayOfUsers.push(global.loggedInAddress);
                     sessionStorage.setItem('type', this.state.inputUsername);
                     alert('Bet accepted');
                 } else {
@@ -88,12 +95,6 @@ class Dashboard extends Component {
     render() {
         return (
             <div className="dashboard-wrapper">
-                <div className="row">
-                    <div className="col">
-                    <canvas id="myChart" width="400" height="400"></canvas>
-                    </div>
-                </div>
-                <div className="row"> </div>
                 <div className="row">
                     <div className="col-sm-6">
                     <input onChange={this.updateValue} type="text" placeholder="Bet value (ETH)"/>   

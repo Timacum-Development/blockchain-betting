@@ -5,8 +5,10 @@ import Web3 from 'web3';
 import compiledContract from './truffle/build/contracts/BettingApp.json';
 import Signup from './components/signup/Signup';
 import Signin from './components/signin/Signin';
+import Signout from './components/signout/Signout';
 import Dashboard from './components/dashboard/Dashboard';
 import EthPrice from './components/ethPrice/EthPrice';
+import Payout from './components/payout/Payout';
 
 /**
  * Create web3 instance
@@ -48,11 +50,11 @@ console.log(contractInstance);
  * List all accounts with their balance
  */
 // web3.eth.getAccounts().then(result => {
-//   result.forEach(address => {
-//     web3.eth.getBalance(address).then(balance => {
-//       console.log('Address: ' + address + ', balance: ' + web3.utils.fromWei(balance, 'ether') + ' ether');
-//     });
-//   });
+  // result.forEach(address => {
+    // web3.eth.getBalance(address).then(balance => {
+      // console.log('Address: ' + address + ', balance: ' + web3.utils.fromWei(balance, 'ether') + ' ether');
+    // });
+  // });
 // });
 
 class App extends Component {
@@ -62,15 +64,22 @@ super(props);
     this.state = {
       showSignup: true,
       showSignin: true,
-      showDashboard: true,
-      showEthPrice: true
+      showDashboard: false,
+      showEthPrice: false,
+      showSignout: false,
+      showPayout: true
     }
   }
 
 
   hideSignin() {
     this.setState({
-      showSignin: false
+      showSignin: !this.state.showSignin,
+      showSignout: !this.state.showSignout,
+      showSignup:!this.state.showSignin,
+      showDashboard: !this.state.showSignout,
+      showEthPrice: !this.state.showSignout,
+      showPayout: !this.state.showPayout
     })
     console.log("App.js showSignin: " + this.state.showSignin);
   }
@@ -78,7 +87,7 @@ super(props);
   render() {
     let signup = null;
     if (this.state.showSignup) {
-      signup = (<Signup />);
+      signup = (<Signup view={this.hideSignin.bind(this)}/>);
     }
 
     let signin = null;
@@ -86,19 +95,32 @@ super(props);
       signin = (<Signin view={this.hideSignin.bind(this)}/>);
     }
 
+    let payout = null;
+    if(this.state.showPayout) {
+      payout = (<Payout view={this.hideSignin.bind(this)}/>);
+    }
+
+    let signout = null;
+    if (this.state.showSignout) {
+      signout = (<Signout view={this.hideSignin.bind(this)}/>);
+    }
+
     let dashboard = null;
     if (this.state.showDashboard) {
-      dashboard = (<Dashboard />);
+      dashboard = (<Dashboard view={this.hideSignin.bind(this)}/>);
     }
     
     let ethPrice = null;
     if (this.state.showEthPrice) {
-      ethPrice = (<EthPrice />);
+      ethPrice = (<EthPrice view={this.hideSignin.bind(this)}/>);
     }
     console.log("App.js showSignin: " + this.state.showSignin);
 
     return (
       <div className="App">
+          <div className="row">
+            {signout}
+          </div>
         <div className="row">
           <div className="col-sm-6">
             {signup}
@@ -108,9 +130,10 @@ super(props);
           </div>
         </div>
         <div className="row">
-          <div className="col">
             {ethPrice}
-            </div>
+        </div>
+        <div className="col">
+            {payout}
         </div>
         <div className="row">
           <div className="col">
