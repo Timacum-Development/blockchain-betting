@@ -63,8 +63,8 @@ super(props);
     this.state = {
       showSignup: true,
       showSignin: true,
-      showDashboard: true,
-      showEthPrice: true,
+      showDashboard: false,
+      showEthPrice: false,
       showSignout: false
     }
   }
@@ -73,7 +73,10 @@ super(props);
   hideSignin() {
     this.setState({
       showSignin: !this.state.showSignin,
-      showSignout: !this.state.showSignout
+      showSignout: !this.state.showSignout,
+      showSignup:!this.state.showSignin,
+      showDashboard: !this.state.showSignout,
+      showEthPrice: !this.state.showSignout,
     })
     console.log("App.js showSignin: " + this.state.showSignin);
   }
@@ -81,7 +84,7 @@ super(props);
   render() {
     let signup = null;
     if (this.state.showSignup) {
-      signup = (<Signup />);
+      signup = (<Signup view={this.hideSignin.bind(this)}/>);
     }
 
     let signin = null;
@@ -96,18 +99,18 @@ super(props);
 
     let dashboard = null;
     if (this.state.showDashboard) {
-      dashboard = (<Dashboard />);
+      dashboard = (<Dashboard view={this.hideSignin.bind(this)}/>);
     }
     
     let ethPrice = null;
     if (this.state.showEthPrice) {
-      ethPrice = (<EthPrice />);
+      ethPrice = (<EthPrice view={this.hideSignin.bind(this)}/>);
     }
     console.log("App.js showSignin: " + this.state.showSignin);
 
     return (
       <div className="App">
-          <div className="col-sm-2">
+          <div className="row">
             {signout}
           </div>
         <div className="row">
@@ -119,9 +122,7 @@ super(props);
           </div>
         </div>
         <div className="row">
-          <div className="col">
             {ethPrice}
-            </div>
         </div>
         <div className="row">
           <div className="col">

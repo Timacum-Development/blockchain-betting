@@ -30,15 +30,14 @@ web3.eth.getCoinbase().then(result => {
 class Signout extends Component {
 
     signOut = () => {
-        this.props.view()
-
-        // TO DO : logout user from system
+        this.props.view();
+        sessionStorage.clear();
     }
 
     render() {
         return (
-            <div> 
-                <button type="submit" onClick={this.signOut}>Sign out</button>
+            <div className="col-sm-12 pull-right"> 
+                <button className="signout pull-right" onClick={this.signOut}>Sign out</button>
             </div>
         );
     }

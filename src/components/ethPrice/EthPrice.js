@@ -23,13 +23,20 @@ class EthPrice extends Component {
 
     render() {
         return (
-            <div className="signin-wrapper">
-              <h1>Ethereum Price:</h1>
-              <p>ETH/USD</p>
-              <h2>${this.state.price}</h2>
-              <h1>{this.state.hourlyPercentChange}%</h1> 
-              <p>Chg.24h</p>       
-            </div>          
+        <div className="ethPrice-wrapper col">
+            <div className="row">
+                <div className="col">
+                <h1>Ethereum Price</h1>
+                <p>ETH/USD</p>
+                <h2>${this.state.price}</h2>     
+                </div>          
+            </div>
+            <div className="row">
+                <div className="col">
+                    <canvas id="myChart" width="100%" height="30%"></canvas>
+                </div>
+            </div>
+        </div>
         );
     }
 }
