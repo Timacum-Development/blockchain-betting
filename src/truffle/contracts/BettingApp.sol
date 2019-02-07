@@ -109,32 +109,34 @@ contract BettingApp {
     
     function payWinnigBets(uint8 _winningType) public {
         require(_winningType == 1 || _winningType == 2);
-        uint reward;
-        uint rewardCoefficient;
-        uint ethForHouse;
-        
-        if (_winningType == 1) {
-            ethForHouse = totalBetUpAmount * 10 / 100;
-            contractOwner.transfer(ethForHouse);
-            totalBetAmount -= ethForHouse;
-            rewardCoefficient = totalBetAmount * 10000 / totalBetDownAmount;
-        } else {
-            ethForHouse = totalBetDownAmount * 10 / 100;
-            contractOwner.transfer(ethForHouse);
-            totalBetAmount -= ethForHouse;
-            rewardCoefficient = totalBetAmount * 10000 / totalBetUpAmount;
-        }
-  
-        for (uint i = 0; i < Bets.length; i++) {
-            if(Bets[i].betType == _winningType) {
-                reward = Bets[i].amount * rewardCoefficient / 10000;
-                Bets[i].playerAddress.transfer(reward);
+        if (Bets.length > 0) {
+            uint reward;
+            uint rewardCoefficient;
+            uint ethForHouse;
+            
+            if (_winningType == 1) {
+                ethForHouse = totalBetUpAmount * 10 / 100;
+                contractOwner.transfer(ethForHouse);
+                totalBetAmount -= ethForHouse;
+                rewardCoefficient = totalBetAmount * 10000 / totalBetDownAmount;
+            } else {
+                ethForHouse = totalBetDownAmount * 10 / 100;
+                contractOwner.transfer(ethForHouse);
+                totalBetAmount -= ethForHouse;
+                rewardCoefficient = totalBetAmount * 10000 / totalBetUpAmount;
             }
+    
+            for (uint i = 0; i < Bets.length; i++) {
+                if(Bets[i].betType == _winningType) {
+                    reward = Bets[i].amount * rewardCoefficient / 10000;
+                    Bets[i].playerAddress.transfer(reward);
+                }
+            }
+            
+            Bets.length = 0;
+            totalBetAmount = 0;
+            totalBetUpAmount = 0;
+            totalBetDownAmount = 0;
         }
-        
-        Bets.length = 0;
-        totalBetAmount = 0;
-        totalBetUpAmount = 0;
-        totalBetDownAmount = 0;
     }
 }

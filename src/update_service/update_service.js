@@ -1,82 +1,69 @@
-// import Web3 from 'web3';
-// import compiledContract from './truffle/build/contracts/BettingApp.json';
-const nodeUrl = require('../eth-node-config');
-const Web3 = require('web3');
-const compiledContract = require('../truffle/build/contracts/BettingApp.json');
-const web3 = new Web3(nodeUrl.url),
-	contractAddress = compiledContract.networks['300'].address,
-	// async = require('async'),
+const nodeUrl = require('../eth-node-config'),
+	async = require('async'),
 	// request = require('request'),
-	fs = require('fs');
+	fs = require('fs'),
+	Web3 = require('web3'),
+	compiledContract = require('../truffle/build/contracts/BettingApp.json'),
+	web3 = new Web3(nodeUrl.url),
+	contractAddress = compiledContract.networks['300'].address,
+	contractInstance = new web3.eth.Contract(compiledContract.abi, contractAddress);
 
 updateAllData = () => {
 
+	let coinbaseAddress = '';
 	let data = {
 		'updateTime': '',
 		'coinbaseBalance': ''
 	}
-	web3.eth.getCoinbase().then(result => {
-		const coinbaseAddress = result;
-		console.log('Coinbase: ' + coinbaseAddress);
-		// web3.eth.personal.unlockAccount('0x6a7ab1c46b4beb1761e0b2e981c22ea555ada4ca', 'koliko', 0).then((e) => {
-		// 	console.log(e);
-		// 	setTimeout(updateAllData, 5000);
-		// });
+
+	async.series([
+
+		updateData = (callback) => {
+			web3.eth.getCoinbase().then(result => {
+				coinbaseAddress = result;
+				web3.eth.personal.unlockAccount(coinbaseAddress, 'koliko', 0).then((e) => {
+					web3.eth.getBalance(coinbaseAddress, function (err, balance) {
+						if (err) {
+							console.error(err);
+							callback(null, '');
+						} else {
+							data.coinbaseBalance = balance / 1000000000000000000;
+							data.updateTime = new Date();
+							callback(null, '');
+						}
+					});
+				});
+			});
+		},
+
+		distributeRewards = (callback) => {
+			web3.eth.getBlock("latest", false, (error, result) => {
+				console.log(result.gasLimit);
+				contractInstance.methods.payWinnigBets(1).send({ from: coinbaseAddress, gas: 8720000 }).then(receipt => {
+					console.log('Rewards distributed, gas spent: ' + receipt.gasUsed);
+					callback(null, '');
+				});
+				// callback(null, '');
+			});
+		}
+
+	], (error, result) => {
+		if (error) {
+			console.log(' ');
+			console.log('Something went wrong :(');
+			console.log('-----------------------');
+			const errorTime = new Date();
+			console.log(errorTime + ': ' + error);
+			console.log('-----------------------');
+			console.log('');
+		} else {
+			const json = JSON.stringify(data);
+			fs.writeFile("data.json", json, function (err) {
+				const logTime = new Date();
+				console.log(logTime + ': Data saved.');
+				setTimeout(updateAllData, 10000);
+			});
+		}
 	});
-		
-	// web3.eth.personal.unlockAccount('0x6a7ab1c46b4beb1761e0b2e981c22ea555ada4ca', 'koliko', 0).then((e) => {
-	// 	console.log(e);
-	// 	data.updateTime = new Date();
-	// 	const json = JSON.stringify(data);
-	// 	fs.writeFile("gpu_data.json", json, function (err) {
-	// 		const logTime = new Date();
-	// 		console.log(logTime + ': Data saved.');
-	// 	});
-	// 	setTimeout(updateAllData, 5000);
-	// });
-
-	// async.series([
-
-		// updateData = () => {
-			
-			// web3.eth.getCoinbase().then(result => {
-			// 	const coinbaseAddress = result;
-			// 	web3.eth.personal.unlockAccount(coinbaseAddress, 'koliko', 0).then((e) => {
-			// 		console.log(e);
-			// 		// data.coinbaseBalance = 'velja';
-			// 		// web3.eth.getBalance(contractAddress, function (err, balance) {
-			// 		// 	if (err) {
-			// 		// 		console.error(err);
-			// 		// 		callback(null, '');
-			// 		// 	} else {
-			// 		// 		// console.log('Contract address: ' + contractAddress);
-			// 		// 		// console.log('Contract balance: ' + balance);
-			// 		// 		data.coinbaseBalance = balance;
-			// 		// 		callback(null, '');
-			// 		// 	}
-			// 		// });
-			// 		callback(null, '');
-			// 	});
-			// });
-		// },
-
-	// ], (error, result) => {
-	// 	if (error) {
-	// 		console.log(' ');
-	// 		console.log('Something went wrong :(');
-	// 		console.log('-----------------------');
-	// 		const errorTime = new Date();
-	// 		console.log(errorTime + ': ' + error);
-	// 		console.log('-----------------------');
-	// 		console.log('');
-	// 	} else {
-	// 		const json = JSON.stringify(data);
-	// 		fs.writeFile("gpu_data.json", json, function (err) {
-	// 			const logTime = new Date();
-	// 			console.log(logTime + ': Data saved.');
-	// 		});
-	// 	}
-	// 	setTimeout(updateAllData, 5000);
-	// });
 }
 updateAllData()

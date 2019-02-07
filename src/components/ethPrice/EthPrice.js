@@ -18,7 +18,7 @@ class EthPrice extends Component {
             .then(data => {
                this.setState({ price: data.result.Last});
             }); 
-        }, 1000)
+        }, 30000)
     }
 
     render() {
