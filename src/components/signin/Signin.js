@@ -19,12 +19,17 @@ const contractAddress = compiledContract.networks['300'].address;
 const contractInstance = new web3.eth.Contract(compiledContract.abi, contractAddress);
 global.loggedInAddress = null;
 
+
 class Signin extends Component {
 
-    state = {
-        inputUsername: '',
-        inputPassword: ''
-    }
+    constructor(props) {
+        super(props);
+        this.state = 
+        {     
+            inputUsername: '',
+            inputPassword: ''
+        };
+      }
 
     // update username state
     updateUsername = (e) => {
@@ -39,6 +44,15 @@ class Signin extends Component {
             inputPassword: e.target.value
         });
     }
+    componentDidMount() {
+        if (sessionStorage.getItem('username') !== '' && sessionStorage.getItem('username') !== null){
+        console.log(sessionStorage.getItem('username'));
+        console.log(sessionStorage.getItem('password'));
+        this.state.inputPassword= sessionStorage.getItem('password');
+        this.state.inputUsername= sessionStorage.getItem('username');
+        this.signIn();
+        }
+    }
 
     signIn = () => {
         // check if there is empty field
@@ -51,6 +65,7 @@ class Signin extends Component {
             if (receipt) {
                 sessionStorage.setItem('username', this.state.inputUsername);
                 sessionStorage.setItem('password', this.state.inputPassword);
+                this.props.view();
                 alert('Successfully logged in');
             } else {
                 sessionStorage.setItem('username', '');
@@ -67,7 +82,6 @@ class Signin extends Component {
                     console.log('Address: ' + receipt + ', balance: ' + web3.utils.fromWei(balance, 'ether') + ' ether');
                 });
                 global.loggedInAddress = receipt;
-                this.props.view()
             }
         })
     }

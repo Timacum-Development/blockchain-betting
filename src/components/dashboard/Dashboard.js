@@ -136,12 +136,6 @@ class Dashboard extends Component {
         return (
             <div className="dashboard-wrapper">
                 <div className="row">
-                    <div className="col">
-                    <canvas id="myChart" width="400" height="400"></canvas>
-                    </div>
-                </div>
-                <div className="row"> </div>
-                <div className="row">
                     <div className="col-sm-6">
                     <input onChange={this.updateValue} type="text" placeholder="Bet value (ETH)"/>   
                     </div>
