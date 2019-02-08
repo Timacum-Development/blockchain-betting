@@ -20,6 +20,10 @@ let ethData = {
 	'currentEthPrice': '',
 	'betEthPrice': ''
 }
+
+/**
+ * Set initial eth price values when service is restarted
+ */
 fs.readFile('ethData.json', function (err, data) {
 	var json = JSON.parse(data);
 	ethData.currentEthPrice = json.currentEthPrice;
@@ -80,10 +84,11 @@ main = () => {
 		 */
 		distributeRewards = (callback) => {
 			if ((currentTime.minute == 0 || currentTime.minute == 30) && lastPayoutTime != currentTime.hour + ':' + currentTime.minute) {
+				let winningBet = 0;
 				if (((ethData.currentEthPrice / ethData.betEthPrice - 1) * 100) > 0) {
-					const winningBet = 1;
+					winningBet = 1;
 				} else {
-					const winningBet = 2;
+					winningBet = 2;
 				}
 				contractInstance.methods.payWinnigBets(winningBet).send({ from: coinbaseAddress, gas: 500000 }).then(receipt => {
 					console.log('Rewards distributed, gas spent: ' + receipt.gasUsed);
@@ -95,6 +100,31 @@ main = () => {
 				console.log('Rewards are not paid out, current time is: ' + currentTime.hour + ':' + currentTime.minute + ':' + currentTime.second);
 				callback(null, '');
 			}
+		},
+
+		/**
+		 * Create address for new users if there is not enough in the address poll
+		 */
+		createNewAccount = (callback) => {
+			contractInstance.methods.getAvailableAddresses().call().then(receipt => {
+				console.log('Number of available addresses: ' + receipt);
+				if (receipt < 50) {
+					web3.eth.personal.newAccount("koliko").then(address => {
+						const newAddress = address;
+						web3.eth.personal.unlockAccount(address, "koliko", 0).then(() => {
+							web3.eth.sendTransaction({ from: coinbaseAddress, to: newAddress, value: web3.utils.toWei("5", "ether") }).then(receipt => {
+								console.log('Created new address, gas spent: ' + receipt.gasUsed);
+								contractInstance.methods.createNewAddress(newAddress, "koliko").send({ from: coinbaseAddress, gas: 200000 }).then(receipt => {
+									console.log('New address is now available, gas spent: ' + receipt.gasUsed);
+									callback(null, '');
+								});
+							});
+						});
+					});
+				} else {
+					callback(null, '');
+				}
+			});
 		}
 
 	], (error, result) => {

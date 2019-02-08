@@ -80,8 +80,6 @@ class Signup extends Component {
                         // register user
                         contractInstance.methods.registerUser(this.state.inputUsername, this.state.inputPassword).send({ from: coinbaseAddress, gas: 200000 }).then((receipt) => {
                             console.log('User successfully registred, gas spent: ' + receipt.gasUsed);
-                            // create new account that will be available for new users
-                            this.createNewAccount();
                         });
                     } else {
                         console.log('Currently there are no available addresses, please try again later.');
