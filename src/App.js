@@ -126,29 +126,31 @@ super(props);
 
     return (
       <div className="App">
-          <div className="row">
-            {signout}
-          </div>
-        <div className="row">
-          <div className="col-sm-6">
-            {signup}
-          </div>
-          <div className="col-sm-6">
-            {signin}
-          </div>
-        </div>
-        <div className="row">
-            {ethPrice}
-        </div>
-        <div className="col">
-            {payout}
-        </div>
-        <div className="col">
-            {timer}
-        </div>
-        <div className="row">
-          <div className="col">
-            {dashboard}
+        <div className="container">
+            <div className="row">
+              {signout}
+            </div>
+            <div className="row">
+              <div className="col-sm-6">
+                {signup}
+              </div>
+              <div className="col-sm-6">
+                {signin}
+              </div>
+            </div>
+            <div className="row">
+                {ethPrice}
+            </div>
+            <div className="col">
+                {payout}
+            </div>
+            <div className="col">
+                {timer}
+            </div>
+            <div className="row">
+              <div className="col">
+                {dashboard}
+              </div>
             </div>
         </div>
       </div>

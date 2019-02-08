@@ -66,7 +66,7 @@ class Signin extends Component {
                 sessionStorage.setItem('username', this.state.inputUsername);
                 sessionStorage.setItem('password', this.state.inputPassword);
                 this.props.view();
-                alert('Successfully logged in');
+                console.log('Successfully logged in');
             } else {
                 sessionStorage.setItem('username', '');
                 sessionStorage.setItem('password', '');

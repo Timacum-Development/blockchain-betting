@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
+import ethData from '../../update_service/ethData.json';
 
 class EthPrice extends Component {
 
     state = {
-        price: '',
-        hourlyPercentChange: ''
+        price: ethData.currentEthPrice,
+        betPrice: ethData.betEthPrice,
+        priceDifference: ((ethData.currentEthPrice / ethData.betEthPrice - 1) * 100).toFixed(2)
     }
 
 /**
@@ -13,23 +15,33 @@ class EthPrice extends Component {
  */
     componentDidMount(){        
         setInterval( () => {
-            fetch('https://cors-anywhere.herokuapp.com/' +'https://api.bittrex.com/api/v1.1/public/getticker?market=USD-ETH')  
-            .then(data => data.json())
-            .then(data => {
-               this.setState({ price: data.result.Last});
-            }); 
-        }, 30000)
+            this.setState({
+                price: ethData.currentEthPrice,
+                betPrice: ethData.betEthPrice,
+                priceDifference: ((ethData.currentEthPrice / ethData.betEthPrice - 1) * 100).toFixed(2)
+            });
+        }, 10000)
     }
 
     render() {
         return (
         <div className="ethPrice-wrapper col">
             <div className="row">
-                <div className="col">
-                <h1>Ethereum Price</h1>
-                <p>ETH/USD</p>
-                <h2>${this.state.price}</h2>     
-                </div>          
+                <div className="col-4">
+                    <h1>Betting against</h1>
+                    <p>ETH/USD</p>
+                    <h2>${this.state.betPrice}</h2>
+                </div>
+                <div className="col-4">
+                    <h1>Price difference</h1>
+                    <p>%</p>
+                    <h2>{this.state.priceDifference}%</h2>
+                </div>
+                <div className="col-4">
+                    <h1>Current Ethereum Price</h1>
+                    <p>ETH/USD</p>
+                    <h2>${this.state.price}</h2>
+                </div>
             </div>
             <div className="row">
                 <div className="col">
