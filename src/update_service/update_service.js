@@ -55,9 +55,9 @@ main = () => {
 			}, function (error, response, data) {
 				if (!error && response.statusCode === 200) {
 					if (typeof data !== 'undefined') {
-						ethData.currentEthPrice = data.result.Last;
+						ethData.currentEthPrice = parseFloat(data.result.Last.toFixed(2));
 						if ((currentTime.minute == 2 || currentTime.minute == 32) && !betPriceSet) {
-							ethData.betEthPrice = data.result.Last;
+							ethData.betEthPrice = parseFloat(data.result.Last.toFixed(2));
 							betPriceSet = true;
 						}
 						console.log('Betting against ETH price: ' + ethData.betEthPrice + ' | Current ETH price: ' + ethData.currentEthPrice);
