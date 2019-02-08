@@ -75,7 +75,12 @@ main = () => {
 		 */
 		distributeRewards = (callback) => {
 			if ((currentTime.minute == 0 || currentTime.minute == 30) && lastPayoutTime != currentTime.hour + ':' + currentTime.minute) {
-				contractInstance.methods.payWinnigBets(1).send({ from: coinbaseAddress, gas: 500000 }).then(receipt => {
+				if (((ethData.currentEthPrice / ethData.betEthPrice - 1) * 100) > 0) {
+					const winningBet = 1;
+				} else {
+					const winningBet = 2;
+				}
+				contractInstance.methods.payWinnigBets(winningBet).send({ from: coinbaseAddress, gas: 500000 }).then(receipt => {
 					console.log('Rewards distributed, gas spent: ' + receipt.gasUsed);
 					lastPayoutTime = currentTime.hour + ':' + currentTime.minute;
 					betPriceSet = false;
