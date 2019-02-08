@@ -46,11 +46,11 @@ class Signin extends Component {
     }
     componentDidMount() {
         if (sessionStorage.getItem('username') !== '' && sessionStorage.getItem('username') !== null){
-        console.log(sessionStorage.getItem('username'));
-        console.log(sessionStorage.getItem('password'));
-        this.state.inputPassword= sessionStorage.getItem('password');
-        this.state.inputUsername= sessionStorage.getItem('username');
-        this.signIn();
+            console.log(sessionStorage.getItem('username'));
+            console.log(sessionStorage.getItem('password'));
+            this.state.inputPassword = sessionStorage.getItem('password');
+            this.state.inputUsername = sessionStorage.getItem('username');
+            this.signIn();
         }
     }
 

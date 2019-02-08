@@ -17,14 +17,6 @@ const contractAddress = compiledContract.networks['300'].address;
  */
 const contractInstance = new web3.eth.Contract(compiledContract.abi, contractAddress);
 
-/**
- * Get coinbase address
- */
-let coinbaseAddress = '';
-web3.eth.getCoinbase().then(result => {
-    coinbaseAddress = result;
-});
-
 global.arrayOfUsers = [];
 
 class Dashboard extends Component {
