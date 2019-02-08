@@ -20,6 +20,11 @@ let ethData = {
 	'currentEthPrice': '',
 	'betEthPrice': ''
 }
+fs.readFile('ethData.json', function (err, data) {
+	var json = JSON.parse(data);
+	ethData.currentEthPrice = json.currentEthPrice;
+	ethData.betEthPrice = json.betEthPrice;
+});
 
 main = () => {
 
