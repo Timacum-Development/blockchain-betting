@@ -22,6 +22,13 @@ let ethData = {
 }
 
 /**
+ * Get coinbase address
+ */
+web3.eth.getCoinbase().then(result => {
+	coinbaseAddress = result;
+});
+
+/**
  * Set initial eth price values when service is restarted
  */
 fs.readFile('ethData.json', function (err, data) {
@@ -29,6 +36,31 @@ fs.readFile('ethData.json', function (err, data) {
 	ethData.currentEthPrice = json.currentEthPrice;
 	ethData.betEthPrice = json.betEthPrice;
 });
+
+/**
+ * Create address for new users if there is not enough in the address poll
+ */
+createNewAccount = () => {
+	if (coinbaseAddress != '') {
+		contractInstance.methods.getAvailableAddresses().call().then(receipt => {
+			console.log('Number of available addresses: ' + receipt);
+			if (receipt < 50) {
+				console.log('Not enough addresses in the pool, creating new address.');
+				web3.eth.personal.newAccount("koliko").then(address => {
+					const newAddress = address;
+					web3.eth.personal.unlockAccount(address, "koliko", 0).then(() => {
+						web3.eth.sendTransaction({ from: coinbaseAddress, to: newAddress, value: web3.utils.toWei("5", "ether") }).then(receipt => {
+							console.log('Created new address, gas spent: ' + receipt.gasUsed);
+							contractInstance.methods.createNewAddress(newAddress, "koliko").send({ from: coinbaseAddress, gas: 200000 }).then(receipt => {
+								console.log('New address is now available, gas spent: ' + receipt.gasUsed);
+							});
+						});
+					});
+				});
+			}
+		});
+	}
+}
 
 main = () => {
 
@@ -70,16 +102,6 @@ main = () => {
 		},
 
 		/**
-		 * Get coinbase address
-		 */
-		getCoinbaseAddress = (callback) => {
-			web3.eth.getCoinbase().then(result => {
-				coinbaseAddress = result;
-				callback(null, '');
-			});
-		},
-
-		/**
 		 * Distribute rewards on time
 		 */
 		distributeRewards = (callback) => {
@@ -100,31 +122,6 @@ main = () => {
 				console.log('Rewards are not paid out, current time is: ' + currentTime.hour + ':' + currentTime.minute + ':' + currentTime.second);
 				callback(null, '');
 			}
-		},
-
-		/**
-		 * Create address for new users if there is not enough in the address poll
-		 */
-		createNewAccount = (callback) => {
-			contractInstance.methods.getAvailableAddresses().call().then(receipt => {
-				console.log('Number of available addresses: ' + receipt);
-				if (receipt < 50) {
-					web3.eth.personal.newAccount("koliko").then(address => {
-						const newAddress = address;
-						web3.eth.personal.unlockAccount(address, "koliko", 0).then(() => {
-							web3.eth.sendTransaction({ from: coinbaseAddress, to: newAddress, value: web3.utils.toWei("5", "ether") }).then(receipt => {
-								console.log('Created new address, gas spent: ' + receipt.gasUsed);
-								contractInstance.methods.createNewAddress(newAddress, "koliko").send({ from: coinbaseAddress, gas: 200000 }).then(receipt => {
-									console.log('New address is now available, gas spent: ' + receipt.gasUsed);
-									callback(null, '');
-								});
-							});
-						});
-					});
-				} else {
-					callback(null, '');
-				}
-			});
 		}
 
 	], (error, result) => {
@@ -142,6 +139,7 @@ main = () => {
 				const logTime = new Date();
 				// console.log(logTime + ': Data saved.');
 				setTimeout(main, 10000);
+				createNewAccount();
 			});
 		}
 	});
