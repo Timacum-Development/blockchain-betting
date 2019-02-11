@@ -77,7 +77,7 @@ class Payout extends Component {
     }
     render() {
         return (
-            <div className="signin-wrapper">
+            <div className="payout-wrapper">
             <br></br>
             <h1>Test buttons za funkciju za isplatu</h1>
             <br></br>

@@ -82,7 +82,7 @@ super(props);
       showDashboard: !this.state.showSignout,
       showEthPrice: !this.state.showSignout,
       showPayout: !this.state.showPayout,
-      showTimer: !this.state.showTimer
+      showTimer: true
     })
     console.log("App.js showSignin: " + this.state.showSignin);
   }
@@ -141,16 +141,16 @@ super(props);
             <div className="row">
                 {ethPrice}
             </div>
-            <div className="col">
-                {payout}
-            </div>
-            <div className="col">
-                {timer}
-            </div>
             <div className="row">
               <div className="col">
                 {dashboard}
               </div>
+            </div>
+            <div className="row">
+                {payout}
+            </div>
+            <div className="row">
+                {timer}
             </div>
         </div>
       </div>

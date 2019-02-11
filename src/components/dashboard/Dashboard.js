@@ -20,10 +20,13 @@ const contractInstance = new web3.eth.Contract(compiledContract.abi, contractAdd
 global.arrayOfUsers = [];
 
 class Dashboard extends Component {
-    
-    state = {
-        inputValue: ''
+  constructor(dashboardProps) {
+    super(dashboardProps)  
+    this.state = {
+        inputValue: '',
+        disablebutton: false
     }
+  }
     
     // update value state
     updateValue = (e) => {
@@ -45,15 +48,27 @@ class Dashboard extends Component {
         }
         // unlock user's address
         web3.eth.personal.unlockAccount(global.loggedInAddress, 'koliko', 0).then(console.log("Otkljucana adresa " + global.loggedInAddress + " YOU CAN NOW BET!"));
+        //disable click on elements until bet accepted
+        this.setState({
+            disablebutton: !this.state.disablebutton
+        });
         // place bet 
         contractInstance.methods.purchaseBet(1).send({from: global.loggedInAddress, value: web3.utils.toWei(this.state.inputValue, "ether"), gas: 300000}).then(receipt => {
             if (receipt) {
                 console.log("Kladim se na keca sa adrese " + global.loggedInAddress);
                 global.arrayOfUsers.push(global.loggedInAddress);
-                sessionStorage.setItem('type', this.state.inputUsername);
+                sessionStorage.setItem('type', this.state.inputValue);
+                //disable click on elements until bet accepted
+                this.setState({
+                    disablebutton: !this.state.disablebutton
+                });
                 alert('Bet accepted');
             } else {
                 sessionStorage.setItem('type', '');
+                //disable click on elements until bet accepted
+                this.setState({
+                    disablebutton: !this.state.disablebutton
+                });
                 alert('Bet rejected');
             }
         });
@@ -71,15 +86,26 @@ class Dashboard extends Component {
             }
             // unlock user's address
             web3.eth.personal.unlockAccount(global.loggedInAddress, 'koliko', 0).then(console.log("Otkljucana adresa " + global.loggedInAddress + " YOU CAN NOW BET!"));
+            //disable click on elements until bet accepted
+            this.setState({
+                disablebutton: !this.state.disablebutton
+            });
             // place bet 
-            contractInstance.methods.purchaseBet(2).send({from:global.loggedInAddress , value:web3.utils.toWei(this.state.inputValue, "ether"), gas: 300000}).then(receipt => {
+            contractInstance.methods.purchaseBet(2).send({from:global.loggedInAddress , value:web3.utils.toWei(this.state.inputValue, "ether"), gas: 300000}).then(receipt => { 
                 if (receipt) {
                     console.log("Kladim se na dvojku sa adrese " + global.loggedInAddress);
                     global.arrayOfUsers.push(global.loggedInAddress);
-                    sessionStorage.setItem('type', this.state.inputUsername);
+                    sessionStorage.setItem('type', this.state.inputValue);
+                    this.setState({
+                        disablebutton: !this.state.disablebutton
+                    });
                     alert('Bet accepted');
-                } else {
+                } 
+                else {
                     sessionStorage.setItem('type', '');
+                    this.setState({
+                        disablebutton: !this.state.disablebutton
+                    });
                     alert('Bet rejected');
                 }
             });
@@ -92,12 +118,28 @@ class Dashboard extends Component {
                     <input onChange={this.updateValue} type="text" placeholder="Bet value (ETH)"/>   
                     </div>
                     <div className="col-sm-3">
-                        <button className="betup" onClick={this.BetUp}>Bet up</button>
+                        <button disabled={this.state.disablebutton} className="betup" onClick={this.BetUp}>Bet up</button>
                     </div>
                     <div className="col-sm-3">
-                        <button className="betdown" onClick={this.BetDown}>Bet down</button>
+                        <button disabled={this.state.disablebutton} className="betdown" onClick={this.BetDown}>Bet down</button>
                     </div>
                 </div>
+                {
+                    this.state.disablebutton?
+                    <div className="loading-wrapper">
+                    <div className="row">
+                        <div className="col-sm-6 column-in-center">
+                            <h2>Accepting bet...</h2>
+                        </div>
+                    </div>
+                    <div className="row">
+                        <div className="col-sm-2 column-in-center">
+                            <div className="loader"></div>
+                        </div>
+                    </div>
+                    </div>
+                :null
+                }
             </div>
         );
     }
