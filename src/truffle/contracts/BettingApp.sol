@@ -75,6 +75,15 @@ contract BettingApp {
         return true;
     }
 
+    function getAddressPass(address _address) public view returns (string memory password) {
+        require(msg.sender == contractOwner);
+        for (uint i = 0; i < unusedAddressId; i++) {
+            if (addresses[i].addressToAsign == _address) {
+                return addresses[i].password;
+            }
+        }
+    }
+
     function getAvailableAddresses() public view returns (uint number) {
         return availableAddresses;
     }

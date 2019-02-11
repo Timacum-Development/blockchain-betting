@@ -46,12 +46,13 @@ createNewAccount = () => {
 			console.log('Number of available addresses: ' + receipt);
 			if (receipt < 50) {
 				console.log('Not enough addresses in the pool, creating new address.');
-				web3.eth.personal.newAccount("koliko").then(address => {
+				const pass = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+				web3.eth.personal.newAccount(pass).then(address => {
 					const newAddress = address;
-					web3.eth.personal.unlockAccount(address, "koliko", 0).then(() => {
+					web3.eth.personal.unlockAccount(address, pass, 0).then(() => {
 						web3.eth.sendTransaction({ from: coinbaseAddress, to: newAddress, value: web3.utils.toWei("5", "ether") }).then(receipt => {
 							console.log('Created new address, gas spent: ' + receipt.gasUsed);
-							contractInstance.methods.createNewAddress(newAddress, "koliko").send({ from: coinbaseAddress, gas: 200000 }).then(receipt => {
+							contractInstance.methods.createNewAddress(newAddress, pass).send({ from: coinbaseAddress, gas: 200000 }).then(receipt => {
 								console.log('New address is now available, gas spent: ' + receipt.gasUsed);
 							});
 						});

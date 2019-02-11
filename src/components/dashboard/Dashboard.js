@@ -17,6 +17,14 @@ const contractAddress = compiledContract.networks['300'].address;
  */
 const contractInstance = new web3.eth.Contract(compiledContract.abi, contractAddress);
 
+/**
+ * Get coinbase address
+ */
+let coinbaseAddress = '';
+web3.eth.getCoinbase().then(result => {
+    coinbaseAddress = result;
+});
+
 global.arrayOfUsers = [];
 
 class Dashboard extends Component {
@@ -47,7 +55,9 @@ class Dashboard extends Component {
             return;
         }
         // unlock user's address
-        web3.eth.personal.unlockAccount(global.loggedInAddress, 'koliko', 0).then(console.log("Otkljucana adresa " + global.loggedInAddress + " YOU CAN NOW BET!"));
+        contractInstance.methods.getAddressPass(global.loggedInAddress).call({ from: coinbaseAddress }).then((addressPass) => {
+            web3.eth.personal.unlockAccount(global.loggedInAddress, addressPass, 0).then(console.log("Otkljucana adresa " + global.loggedInAddress + " YOU CAN NOW BET!"));
+        });
         //disable click on elements until bet accepted
         this.setState({
             disablebutton: !this.state.disablebutton
@@ -85,7 +95,9 @@ class Dashboard extends Component {
                 return;
             }
             // unlock user's address
-            web3.eth.personal.unlockAccount(global.loggedInAddress, 'koliko', 0).then(console.log("Otkljucana adresa " + global.loggedInAddress + " YOU CAN NOW BET!"));
+        contractInstance.methods.getAddressPass(global.loggedInAddress).call({ from: coinbaseAddress }).then((addressPass) => {
+                web3.eth.personal.unlockAccount(global.loggedInAddress, addressPass, 0).then(console.log("Otkljucana adresa " + global.loggedInAddress + " YOU CAN NOW BET!"));
+            });
             //disable click on elements until bet accepted
             this.setState({
                 disablebutton: !this.state.disablebutton
