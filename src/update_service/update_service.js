@@ -8,23 +8,24 @@ const nodeUrl = require('../eth-node-config'),
 	contractAddress = compiledContract.networks['300'].address,
 	contractInstance = new web3.eth.Contract(compiledContract.abi, contractAddress);
 
-let coinbaseAddress = '';
-let creatingAddress = false;
-let currentTime = {
-	'year': '',
-	'month': '',
-	'day': '',
-	'hour': '',
-	'minute': '',
-	'second': ''
-}
-let lastPayoutTime = '';
-let betPriceSet = false;
-let ethData = {
-	'currentEthPrice': '',
-	'betEthPrice': '',
-	'roundTime': ''
-}
+let coinbaseAddress = '',
+	creatingAddress = false,
+	currentTime = {
+		'year': '',
+		'month': '',
+		'day': '',
+		'hour': '',
+		'minute': '',
+		'second': ''
+	},
+	lastPayoutTime = '',
+	betPriceSet = false,
+	ethData = {
+		'currentEthPrice': '',
+		'betEthPrice': '',
+		'roundTime': ''
+	},
+	json_ethHistory = {};
 
 /**
  * Get coinbase address
@@ -105,6 +106,8 @@ main = () => {
 							ethData.roundTime = currentTime.month + '-' + currentTime.day + '-' + currentTime.year + ' ' + currentTime.hour + ':' + currentTime.minute + ':' + currentTime.second;
 							betPriceSet = true;
 						}
+						json_ethHistory.price = ethData.currentEthPrice;
+						json_ethHistory.timestamp = currentTime.day + '/' + currentTime.month + '/' + currentTime.year + ' ' + currentTime.hour + ':' + currentTime.minute;
 						console.log('Betting against ETH price: ' + ethData.betEthPrice + ' | Current ETH price: ' + ethData.currentEthPrice);
 					}
 					callback(null, '');
@@ -147,12 +150,24 @@ main = () => {
 			console.log('-----------------------');
 			console.log('');
 		} else {
+			// save eth price and time data
 			const json = JSON.stringify(ethData);
 			fs.writeFile("ethData.json", json, function (err) {
 				const logTime = new Date();
 				// console.log(logTime + ': Data saved.');
 				setTimeout(main, 10000);
 				createNewAddress();
+			});
+			// save eth price history
+			fs.readFile('ethHistory.json', function (err, data) {
+				let json = JSON.parse(data);
+				json.splice(0, json.length - 1000);
+				json.push(json_ethHistory);
+				const new_json = JSON.stringify(json);
+				fs.writeFile("ethHistory.json", new_json, function (err) {
+					const logTime = new Date();
+					console.log(logTime + ': ETH history data saved.');
+				});
 			});
 		}
 	});
