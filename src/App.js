@@ -19,7 +19,7 @@ const web3 = new Web3(nodeUrl.url);
  */
 web3.eth.getCoinbase().then(result => {
   const coinbaseAddress = result;
-  web3.eth.personal.unlockAccount(coinbaseAddress, 'koliko', 0).then(console.log('Coinbase address unlocked'));
+  web3.eth.personal.unlockAccount(coinbaseAddress, 'koliko', 0);
 });
 
 /**
@@ -78,7 +78,6 @@ super(props);
       showDashboard: !this.state.showSignout,
       showEthPrice: !this.state.showSignout,
     })
-    console.log("App.js showSignin: " + this.state.showSignin);
   }
 
   render() {
@@ -106,7 +105,6 @@ super(props);
     if (this.state.showEthPrice) {
       ethPrice = (<EthPrice view={this.hideSignin.bind(this)}/>);
     }
-    console.log("App.js showSignin: " + this.state.showSignin);
 
     return (
       <div className="App">

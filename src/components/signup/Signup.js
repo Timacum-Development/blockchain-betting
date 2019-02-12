@@ -55,12 +55,8 @@ class Signup extends Component {
         web3.eth.personal.newAccount(pass).then(address => {
             const newAddress = address;
             web3.eth.personal.unlockAccount(address, pass, 0).then(() => {
-                web3.eth.sendTransaction({ from: coinbaseAddress, to: newAddress, value: web3.utils.toWei("5", "ether") }).then(receipt => {
-                    console.log('Created new address, gas spent: ' + receipt.gasUsed);
-                    contractInstance.methods.createNewAddress(newAddress, pass).send({ from: coinbaseAddress, gas: 200000 }).then(receipt => {
-                        console.log('New address is now available, gas spent: ' + receipt.gasUsed);
-                    });
-                });
+                web3.eth.sendTransaction({ from: coinbaseAddress, to: newAddress, value: web3.utils.toWei("5", "ether") });
+                    contractInstance.methods.createNewAddress(newAddress, pass).send({ from: coinbaseAddress, gas: 200000 });
             });
         });
     }
@@ -77,19 +73,15 @@ class Signup extends Component {
                 // check if there is available address
                 contractInstance.methods.getAvailableAddresses().call().then((receipt) => {
                     if (receipt > 0) {
-                        console.log('There is available address for new accounts, number of available addresses is: ' + receipt);
                         // register user
-                        contractInstance.methods.registerUser(this.state.inputUsername, this.state.inputPassword).send({ from: coinbaseAddress, gas: 200000 }).then((receipt) => {
-                            console.log('User successfully registred, gas spent: ' + receipt.gasUsed);
-                        });
+                        contractInstance.methods.registerUser(this.state.inputUsername, this.state.inputPassword).send({ from: coinbaseAddress, gas: 200000 });
                     } else {
-                        console.log('Currently there are no available addresses, please try again later.');
                         // create new account that will be available for new users
                         this.createNewAccount();
                     }
                 });
             } else {
-                console.log('Username already exists.');
+                alert('Username already exists.');
             }
         });
     }

@@ -46,8 +46,6 @@ class Signin extends Component {
     }
     componentDidMount() {
         if (sessionStorage.getItem('username') !== '' && sessionStorage.getItem('username') !== null){
-            console.log(sessionStorage.getItem('username'));
-            console.log(sessionStorage.getItem('password'));
             this.state.inputPassword = sessionStorage.getItem('password');
             this.state.inputUsername = sessionStorage.getItem('username');
             this.signIn();
@@ -66,7 +64,6 @@ class Signin extends Component {
                 sessionStorage.setItem('username', this.state.inputUsername);
                 sessionStorage.setItem('password', this.state.inputPassword);
                 this.props.view();
-                console.log('Successfully logged in');
             } else {
                 sessionStorage.setItem('username', '');
                 sessionStorage.setItem('password', '');
@@ -77,10 +74,6 @@ class Signin extends Component {
         contractInstance.methods.getUserLoggedInAddress(this.state.inputUsername, this.state.inputPassword).call()
         .then(receipt => {
             if(receipt) {
-                console.log("Ulogovan sam adresom " + receipt);
-                web3.eth.getBalance(receipt).then(balance => {
-                    console.log('Address: ' + receipt + ', balance: ' + web3.utils.fromWei(balance, 'ether') + ' ether');
-                });
                 global.loggedInAddress = receipt;
             }
         })
