@@ -10,6 +10,9 @@ const nodeUrl = require('../eth-node-config'),
 
 let coinbaseAddress = '';
 let currentTime = {
+	'year': '',
+	'month': '',
+	'day': '',
 	'hour': '',
 	'minute': '',
 	'second': ''
@@ -18,7 +21,8 @@ let lastPayoutTime = '';
 let betPriceSet = false;
 let ethData = {
 	'currentEthPrice': '',
-	'betEthPrice': ''
+	'betEthPrice': '',
+	'roundTime': ''
 }
 
 /**
@@ -29,12 +33,13 @@ web3.eth.getCoinbase().then(result => {
 });
 
 /**
- * Set initial eth price values when service is restarted
+ * Set initial eth price values and round time when service is restarted
  */
 fs.readFile('ethData.json', function (err, data) {
 	var json = JSON.parse(data);
 	ethData.currentEthPrice = json.currentEthPrice;
 	ethData.betEthPrice = json.betEthPrice;
+	ethData.roundTime = json.roundTime;
 });
 
 /**
@@ -72,6 +77,9 @@ main = () => {
 		 */
 		updateTime = (callback) => {
 			const time = new Date();
+			currentTime.year = time.getYear() + 1900;
+			currentTime.month = time.getMonth() + 1;
+			currentTime.day = time.getDate();
 			currentTime.hour = time.getHours();
 			currentTime.minute = time.getMinutes();
 			currentTime.second = time.getSeconds();
@@ -89,8 +97,10 @@ main = () => {
 				if (!error && response.statusCode === 200) {
 					if (typeof data !== 'undefined') {
 						ethData.currentEthPrice = parseFloat(data.result.Last.toFixed(2));
+						console.log(currentTime.month + '-' + currentTime.day + '-' + currentTime.year + ' ' + currentTime.hour + ':' + currentTime.minute + ':' + currentTime.second);
 						if ((currentTime.minute == 2 || currentTime.minute == 32) && !betPriceSet) {
 							ethData.betEthPrice = parseFloat(data.result.Last.toFixed(2));
+							ethData.roundTime = currentTime.month + '-' + currentTime.day + '-' + currentTime.year + ' ' + currentTime.hour + ':' + currentTime.minute + ':' + currentTime.second;
 							betPriceSet = true;
 						}
 						console.log('Betting against ETH price: ' + ethData.betEthPrice + ' | Current ETH price: ' + ethData.currentEthPrice);
