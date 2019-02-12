@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import nodeUrl from '../../eth-node-config.json';
 import Web3 from 'web3';
 import compiledContract from '../../truffle/build/contracts/BettingApp.json';
+import Timer from '../timer/Timer.js';
 /**
  * Create web3 instance
  */
@@ -32,7 +33,8 @@ class Dashboard extends Component {
     super(dashboardProps)  
     this.state = {
         inputValue: '',
-        disablebutton: false
+        disablebutton: false,
+        showTimer: true
     }
   }
     
@@ -123,6 +125,10 @@ class Dashboard extends Component {
             });
     }
     render() {
+        let timer = null;
+        if(this.state.showTimer) {
+          timer = (<Timer />);
+        }
         return (
             <div className="dashboard-wrapper">
                 <div className="row">
@@ -152,6 +158,9 @@ class Dashboard extends Component {
                     </div>
                 :null
                 }
+            <div className="row">
+                {timer}
+            </div>
             </div>
         );
     }
