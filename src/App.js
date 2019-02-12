@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import nodeUrl from './eth-node-config.json';
+import ethHistory from './update_service/ethHistory.json';
 import './App.css';
 import Web3 from 'web3';
 import compiledContract from './truffle/build/contracts/BettingApp.json';
@@ -8,6 +9,9 @@ import Signin from './components/signin/Signin';
 import Signout from './components/signout/Signout';
 import Dashboard from './components/dashboard/Dashboard';
 import EthPrice from './components/ethPrice/EthPrice';
+import Timer from './components/timer/Timer';
+import moment from 'moment';
+import Chart from 'chart.js';
 
 /**
  * Create web3 instance
