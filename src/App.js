@@ -8,8 +8,6 @@ import Signin from './components/signin/Signin';
 import Signout from './components/signout/Signout';
 import Dashboard from './components/dashboard/Dashboard';
 import EthPrice from './components/ethPrice/EthPrice';
-import Payout from './components/payout/Payout';
-import Timer from './components/timer/Timer';
 
 /**
  * Create web3 instance
@@ -68,8 +66,6 @@ super(props);
       showDashboard: false,
       showEthPrice: false,
       showSignout: false,
-      showPayout: true,
-      showTimer: true
     }
   }
 
@@ -81,8 +77,6 @@ super(props);
       showSignup:!this.state.showSignin,
       showDashboard: !this.state.showSignout,
       showEthPrice: !this.state.showSignout,
-      showPayout: !this.state.showPayout,
-      showTimer: true
     })
     console.log("App.js showSignin: " + this.state.showSignin);
   }
@@ -96,16 +90,6 @@ super(props);
     let signin = null;
     if (this.state.showSignin) {
       signin = (<Signin view={this.hideSignin.bind(this)}/>);
-    }
-
-    let payout = null;
-    if(this.state.showPayout) {
-      payout = (<Payout view={this.hideSignin.bind(this)}/>);
-    }
-
-    let timer = null;
-    if(this.state.showTimer) {
-      timer = (<Timer view={this.hideSignin.bind(this)}/>);
     }
 
     let signout = null;
@@ -145,12 +129,6 @@ super(props);
               <div className="col">
                 {dashboard}
               </div>
-            </div>
-            <div className="row">
-                {payout}
-            </div>
-            <div className="row">
-                {timer}
             </div>
         </div>
       </div>
