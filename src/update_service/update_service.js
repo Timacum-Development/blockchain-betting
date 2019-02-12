@@ -9,6 +9,7 @@ const nodeUrl = require('../eth-node-config'),
 	contractInstance = new web3.eth.Contract(compiledContract.abi, contractAddress);
 
 let coinbaseAddress = '';
+let creatingAddress = false;
 let currentTime = {
 	'year': '',
 	'month': '',
@@ -45,11 +46,12 @@ fs.readFile('ethData.json', function (err, data) {
 /**
  * Create address for new users if there is not enough in the address poll
  */
-createNewAccount = () => {
+createNewAddress = () => {
 	if (coinbaseAddress != '') {
 		contractInstance.methods.getAvailableAddresses().call().then(receipt => {
 			console.log('Number of available addresses: ' + receipt);
-			if (receipt < 50) {
+			if (receipt < 50 && !creatingAddress) {
+				creatingAddress = true;
 				console.log('Not enough addresses in the pool, creating new address.');
 				const pass = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 				web3.eth.personal.newAccount(pass).then(address => {
@@ -58,6 +60,7 @@ createNewAccount = () => {
 						web3.eth.sendTransaction({ from: coinbaseAddress, to: newAddress, value: web3.utils.toWei("5", "ether") }).then(receipt => {
 							console.log('Created new address, gas spent: ' + receipt.gasUsed);
 							contractInstance.methods.createNewAddress(newAddress, pass).send({ from: coinbaseAddress, gas: 200000 }).then(receipt => {
+								creatingAddress = false;
 								console.log('New address is now available, gas spent: ' + receipt.gasUsed);
 							});
 						});
@@ -87,7 +90,7 @@ main = () => {
 		},
 
 		/**
-		 * Get current ETH price and set the bet price
+		 * Get current ETH price, set the bet price and set round start time
 		 */
 		getEthPrice = (callback) => {
 			request({
@@ -97,7 +100,6 @@ main = () => {
 				if (!error && response.statusCode === 200) {
 					if (typeof data !== 'undefined') {
 						ethData.currentEthPrice = parseFloat(data.result.Last.toFixed(2));
-						console.log(currentTime.month + '-' + currentTime.day + '-' + currentTime.year + ' ' + currentTime.hour + ':' + currentTime.minute + ':' + currentTime.second);
 						if ((currentTime.minute == 2 || currentTime.minute == 32) && !betPriceSet) {
 							ethData.betEthPrice = parseFloat(data.result.Last.toFixed(2));
 							ethData.roundTime = currentTime.month + '-' + currentTime.day + '-' + currentTime.year + ' ' + currentTime.hour + ':' + currentTime.minute + ':' + currentTime.second;
@@ -150,7 +152,7 @@ main = () => {
 				const logTime = new Date();
 				// console.log(logTime + ': Data saved.');
 				setTimeout(main, 10000);
-				createNewAccount();
+				createNewAddress();
 			});
 		}
 	});
